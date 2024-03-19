@@ -23,3 +23,17 @@ gleam run   # Run the project
 gleam test  # Run the tests
 gleam shell # Run an Erlang shell
 ```
+
+## Watch mode
+
+Install [Air](https://github.com/cosmtrek/air?tab=readme-ov-file#installation)
+
+```
+air --build.bin "gleam run"
+```
+
+or 
+
+```
+air
+```
