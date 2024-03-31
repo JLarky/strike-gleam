@@ -79,6 +79,7 @@ async function chunksToJSX(chunks, ctx = newContext()) {
   return root;
 }
 
+/** @type {import("./rsc").chunkToJSX}*/
 export function chunkToJSX(ctx, x) {
   const parsed = JSON.parse(x, function fromJSON(key, value) {
     return parseModelString(ctx, this, key, value);
@@ -127,6 +128,19 @@ function actionify(obj, actionId) {
 
 /** @type {import("./rsc").parseModelString} */
 function parseModelString(ctx, parent, key, value) {
+  if (Array.isArray(value)) {
+    if (value[0] === "$strike:element") {
+      return {
+        $$typeof: Symbol.for("react.element"),
+        type: value[1],
+        ref: null,
+        key: null,
+        props: value[2],
+      };
+    } else if (value[0] === "$strike:text") {
+      return value[1];
+    }
+  }
   if (
     key === "data-$strike-action" &&
     typeof value === "string" &&

@@ -25,10 +25,9 @@ pub fn element(
     | "param"
     | "source"
     | "track"
-    | "wbr" -> Element("", tag, attrs, [], False, True)
+    | "wbr" -> Element(tag, attrs, [], False, True)
     _ ->
       Element(
-        namespace: "",
         tag: tag,
         attrs: attrs,
         children: children,
@@ -39,7 +38,6 @@ pub fn element(
 }
 
 pub fn advanced(
-  namespace: String,
   tag: String,
   attrs: List(Attribute(msg)),
   children: List(Element(msg)),
@@ -47,7 +45,6 @@ pub fn advanced(
   void: Bool,
 ) -> Element(msg) {
   Element(
-    namespace: namespace,
     tag: tag,
     attrs: attrs,
     children: children,
@@ -59,7 +56,6 @@ pub fn advanced(
 pub type Element(msg) {
   Text(content: String)
   Element(
-    namespace: String,
     tag: String,
     attrs: List(Attribute(msg)),
     children: List(Element(msg)),
@@ -73,5 +69,4 @@ pub type Element(msg) {
 
 pub type Attribute(msg) {
   Attribute(String, Dynamic, as_property: Bool)
-  Event(String, Decoder(msg))
 }
