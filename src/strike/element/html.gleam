@@ -1,6 +1,7 @@
 // MIT: https://github.com/lustre-labs/lustre/blob/main/src/lustre/element/html.gleam
 
-import strike/element.{type Attribute, type Element, element, text}
+import strike/attribute.{type Attribute}
+import strike/element.{type Element, element, text}
 
 pub fn div(
   attrs: List(Attribute(msg)),
@@ -11,6 +12,10 @@ pub fn div(
 
 pub fn script(attrs: List(Attribute(msg)), js: String) -> Element(msg) {
   element("script", attrs, [text(js)])
+}
+
+pub fn script_raw(attrs: List(Attribute(msg))) -> Element(msg) {
+  element("script", attrs, [])
 }
 
 pub fn html(

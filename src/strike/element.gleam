@@ -1,6 +1,6 @@
 // MIT: https://github.com/lustre-labs/lustre/blob/main/src/lustre/element.gleam
 
-import gleam/dynamic.{type Decoder, type Dynamic}
+import strike/attribute.{type Attribute}
 
 pub fn text(content: String) -> Element(msg) {
   Text(content)
@@ -67,6 +67,19 @@ pub type Element(msg) {
   Map(subtree: fn() -> Element(msg))
 }
 
-pub type Attribute(msg) {
-  Attribute(String, Dynamic, as_property: Bool)
+pub fn update_children(
+  parent: Element(msg),
+  children_update: fn(List(Element(msg))) -> List(Element(msg)),
+) -> Element(msg) {
+  case parent {
+    Element(tag, attrs, existing_children, self_closing, void) ->
+      Element(
+        tag: tag,
+        attrs: attrs,
+        children: children_update(existing_children),
+        self_closing: self_closing,
+        void: void,
+      )
+    _ -> parent
+  }
 }

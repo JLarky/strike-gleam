@@ -1,8 +1,9 @@
 import gleam/io
-import strike/element.{type Attribute, type Element, Attribute, Element, Text}
+import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
+import strike/element.{type Element, Element, Text}
 import gleam/json.{type Json}
 import gleam/list
-import gleam/dynamic
+import gleam/dynamic.{type DecodeError}
 import gleam/result
 
 pub fn to_json(element: Element(a)) -> Json {
@@ -12,7 +13,7 @@ pub fn to_json(element: Element(a)) -> Json {
       json.preprocessed_array([json.string("$strike:text"), json.string(text)])
     }
     Element(tag, attrs, children, _self_closing, _void) -> {
-      let props = list.map(attrs, attr_to_json)
+      let props = list.filter_map(attrs, attr_to_json)
       let children = case children {
         [child] -> to_json(child)
         _ -> json.preprocessed_array(list.map(children, to_json))
@@ -33,24 +34,20 @@ pub fn to_json(element: Element(a)) -> Json {
   }
 }
 
-pub fn attr_to_json(attr: Attribute(msg)) -> #(String, Json) {
+pub fn attr_to_json(
+  attr: Attribute(msg),
+) -> Result(#(String, Json), List(DecodeError)) {
   case attr {
-    Attribute(key, value, _) -> {
-      let unwrap_value =
-        dynamic.any(of: [
-          fn(x) {
-            result.map(dynamic.string(x), fn(x) { #(key, json.string(x)) })
-          },
-          fn(x) { result.map(dynamic.bool(x), fn(x) { #(key, json.bool(x)) }) },
-        ])(value)
-
-      case unwrap_value {
-        Ok(x) -> x
-        _ -> {
-          io.debug(value)
-          #("unknown_type", json.string(key))
-        }
-      }
+    SimpleAttribute(key, value) -> {
+      Ok(#(key, json.string(value)))
+    }
+    FancyAttribute(key, _attr_name, value, _) -> {
+      dynamic.any(of: [
+        fn(x) {
+          result.map(dynamic.string(x), fn(x) { #(key, json.string(x)) })
+        },
+        fn(x) { result.map(dynamic.bool(x), fn(x) { #(key, json.bool(x)) }) },
+      ])(value)
     }
   }
 }

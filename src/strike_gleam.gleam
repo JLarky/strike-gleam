@@ -11,37 +11,13 @@ import gleam/option.{None, Some}
 import gleam/otp/actor
 import gleam/result
 import gleam/string
-import gleam/json
 import mist.{type Connection, type ResponseData}
 import strike/element/html
-import strike/element/json as element_json
 import strike/element.{text}
-import strike/attribute.{suppress_hydration_warning, type_}
+import strike/attribute.{suppress_hydration_warning}
+import strike/framework.{render_html_document}
 
 pub fn main() {
-  let import_maps =
-    "{
-      \"imports\": {
-        \"strike_islands\": \"/_strike/islands.js\",
-        \"react\": \"https://esm.sh/react@0.0.0-experimental-9ba1bbd65-20230922?dev\",
-        \"react-dom/client\": \"https://esm.sh/react-dom@0.0.0-experimental-9ba1bbd65-20230922/client?dev\",
-        \"react-dom\": \"https://esm.sh/react-dom@0.0.0-experimental-9ba1bbd65-20230922?dev\",
-        \"react/jsx-runtime\": \"https://esm.sh/react@0.0.0-experimental-9ba1bbd65-20230922/jsx-runtime?dev\",
-        \"react-error-boundary\": \"https://esm.sh/react-error-boundary@4.0.11\"
-      }
-    }"
-
-  let head =
-    html.head([], [
-      html.title([], "Strike!!!"),
-      html.script([type_("importmap")], import_maps),
-    ])
-  let rsc =
-    html.html([suppress_hydration_warning(True)], [
-      head,
-      html.body([], [html.div([], [text("Hello, world!!!")])]),
-    ])
-
   // These values are for the Websocket process initialized below
   let selector = process.new_selector()
   let state = Nil
@@ -54,14 +30,12 @@ pub fn main() {
     fn(req: Request(Connection)) -> Response(ResponseData) {
       case request.path_segments(req) {
         [] -> {
+          let head = html.head([], [html.title([], "Strike!")])
+          let body = html.body([], [html.div([], [text("Hello, world!")])])
+          let rsc = html.html([suppress_hydration_warning(True)], [head, body])
+
           response.new(200)
-          |> response.set_body(
-            mist.Bytes(bytes_builder.from_string("<!DOCTYPE html>
-              <html><head><title>From html</title><script type=\"importmap\">" <> import_maps <> "</script><script async type='module' src='/_strike/bootstrap.js'></script></head><body><div>Hello, world!!!</div><script>self.__rsc=self.__rsc||[];__rsc.push(" <> json.to_string(
-              json.string(json.to_string(element_json.to_json(rsc))),
-            ) <> ");</script></body>
-            </html>")),
-          )
+          |> response.set_body(mist.Bytes(render_html_document(rsc)))
           |> response.set_header("content-type", "text/html")
         }
         ["ws"] ->
