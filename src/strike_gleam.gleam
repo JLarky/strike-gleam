@@ -2,9 +2,11 @@ import gleam/bytes_builder
 import gleam/erlang/process
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
+import gleam/int
 import gleam/io
 import gleam/iterator
 import gleam/list
+import gleam/erlang/os
 import gleam/option.{None, Some}
 import gleam/otp/actor
 import gleam/result
@@ -78,7 +80,13 @@ pub fn main() {
       }
     }
     |> mist.new
-    |> mist.port(3000)
+    |> mist.port({
+      let port =
+        os.get_env("PORT")
+        |> result.try(int.parse)
+        |> result.unwrap(3000)
+      port
+    })
     |> mist.start_http
 
   process.sleep_forever()
