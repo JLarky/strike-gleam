@@ -1,4 +1,6 @@
+import gleam/bit_array
 import gleam/bytes_builder
+import gleam/crypto.{Sha256}
 import gleam/erlang/process
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
@@ -14,8 +16,8 @@ import gleam/string
 import mist.{type Connection, type ResponseData}
 import strike/element/html
 import strike/element.{text}
-import strike/attribute.{suppress_hydration_warning}
-import strike/framework.{render_html_document}
+import strike/attribute.{href, lang, suppress_hydration_warning}
+import strike/framework/mist_adapter.{rsc_framework_response}
 
 pub fn main() {
   // These values are for the Websocket process initialized below
@@ -29,15 +31,8 @@ pub fn main() {
   let assert Ok(_) =
     fn(req: Request(Connection)) -> Response(ResponseData) {
       case request.path_segments(req) {
-        [] -> {
-          let head = html.head([], [html.title([], "Strike!")])
-          let body = html.body([], [html.div([], [text("Hello, world!")])])
-          let rsc = html.html([suppress_hydration_warning(True)], [head, body])
-
-          response.new(200)
-          |> response.set_body(mist.Bytes(render_html_document(rsc)))
-          |> response.set_header("content-type", "text/html")
-        }
+        [] -> handle_rsc_request(req)
+        ["about"] -> handle_rsc_request(req)
         ["ws"] ->
           mist.websocket(
             request: req,
@@ -64,6 +59,43 @@ pub fn main() {
     |> mist.start_http
 
   process.sleep_forever()
+}
+
+fn handle_rsc_request(req) {
+  let sha256 =
+    crypto.strong_random_bytes(32)
+    |> crypto.hash(Sha256, _)
+    |> bit_array.base64_encode(True)
+  let nav =
+    html.nav([], [
+      html.a([href("/")], [text("Home")]),
+      text(" "),
+      html.a([href("/about")], [text("About")]),
+    ])
+  let footer =
+    html.footer([], [
+      html.a([href("https://github.com/JLarky/strike-gleam")], [
+        text("see source"),
+      ]),
+    ])
+  let body =
+    html.div([], [
+      nav,
+      html.div([], [
+        html.div([], [text("My page is " <> request.to_uri(req).path)]),
+        html.div([], [
+          text("and I generated this sha256 on the server: " <> sha256),
+        ]),
+      ]),
+      footer,
+    ])
+  let page =
+    html.html([lang("en"), suppress_hydration_warning(True)], [
+      html.head([], [html.title([], "Title " <> request.to_uri(req).path)]),
+      html.body([], [body]),
+    ])
+
+  rsc_framework_response(req, page)
 }
 
 pub type MyMessage {

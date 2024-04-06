@@ -52,3 +52,11 @@ pub fn dangerously_set_inner_html(value: String) -> Attribute(msg) {
     True,
   )
 }
+
+pub fn href(value: String) {
+  attribute("href", value)
+}
+
+pub fn lang(value: String) {
+  attribute("lang", value)
+}

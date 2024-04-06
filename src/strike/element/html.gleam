@@ -42,3 +42,15 @@ pub fn body(
 pub fn title(attrs: List(Attribute(msg)), title: String) -> Element(msg) {
   element("title", attrs, [text(title)])
 }
+
+pub fn a(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("a", attrs, children)
+}
+
+pub fn nav(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("nav", attrs, children)
+}
+
+pub fn footer(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("footer", attrs, children)
+}

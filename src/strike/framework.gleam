@@ -7,6 +7,11 @@ import strike/element/html
 import strike/element/render
 import strike/element
 
+pub fn render_rsc_stream(rsc) {
+  json.to_string_builder(element_json.to_json(rsc))
+  |> bytes_builder.from_string_builder()
+}
+
 pub fn render_html_document(rsc) {
   let rsc_string =
     json.to_string(json.string(json.to_string(element_json.to_json(rsc))))
