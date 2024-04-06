@@ -79,7 +79,7 @@ fn attribute_to_string_builder(
         |> string_builder.from_string()
       #(new_raw, string_builder.new())
     }
-    FancyAttribute(_key, _attribute_name, value, as_property: True) -> {
+    FancyAttribute(_key, _attribute_name, _value, as_property: True) -> {
       #(raw, string_builder.new())
     }
     FancyAttribute(_key, attribute_name, value, as_property: False) -> {
