@@ -37,3 +37,13 @@ or
 ```
 air
 ```
+
+## Acknowledgements
+
+- [Strike](https://github.com/JLarky/strike) - Fuller version of this framework written in Go
+- [The Original RSC demo](https://github.com/reactjs/server-components-demo)
+- [Lustre](https://github.com/lustre-labs/lustre) - ELM-inspired web framework for Gleam, Gleam version of Strike is using the same API to build elements
+- Strike demo is deployed on Zeabur as a Docker container using GitHub integration (zero config, no GitHub actions)
+
+<a href="https://zeabur.com?referralCode=JLarky&utm_source=JLarky&utm_campaign=oss#gh-dark-mode-only"><img src="https://zeabur.com/deployed-on-zeabur-dark.svg#gh-dark-mode-only" alt="Deployed on Zeabur"/></a>
+<a href="https://zeabur.com?referralCode=JLarky&utm_source=JLarky&utm_campaign=oss#gh-light-mode-only"><img src="https://zeabur.com/deployed-on-zeabur-light.svg#gh-light-mode-only" alt="Deployed on Zeabur"/></a>
