@@ -1,6 +1,7 @@
 import gleam/bit_array
 import gleam/bytes_builder
 import gleam/crypto.{Sha256}
+import gleam/erlang
 import gleam/erlang/process
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
@@ -153,6 +154,8 @@ fn serve_file(
   path: List(String),
 ) -> Response(ResponseData) {
   let file_path = string.join(path, "/")
+  let assert Ok(priv_dir) = erlang.priv_directory("strike_gleam")
+  let file_path = priv_dir <> "/" <> file_path
 
   // Omitting validation for brevity
   mist.send_file(file_path, offset: 0, limit: None)
