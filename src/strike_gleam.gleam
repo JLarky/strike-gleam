@@ -16,8 +16,8 @@ import gleam/result
 import gleam/string
 import mist.{type Connection, type ResponseData}
 import strike/element/html
-import strike/element.{text}
-import strike/attribute.{href, lang, suppress_hydration_warning}
+import strike/element.{island, text}
+import strike/attribute.{dyn_attribute, href, lang, suppress_hydration_warning}
 import strike/framework/mist_adapter.{rsc_framework_response}
 
 pub fn main() {
@@ -79,6 +79,10 @@ fn handle_rsc_request(req) {
         text("see source"),
       ]),
     ])
+  let island_el =
+    island("Counter", [dyn_attribute("serverCounter", 0)], [], [
+      html.div([], [text("Loading...")]),
+    ])
   let body =
     html.div([], [
       nav,
@@ -87,6 +91,7 @@ fn handle_rsc_request(req) {
         html.div([], [
           text("and I generated this sha256 on the server: " <> sha256),
         ]),
+        island_el,
       ]),
       footer,
     ])

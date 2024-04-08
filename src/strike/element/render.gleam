@@ -1,10 +1,9 @@
 import gleam/bytes_builder.{type BytesBuilder}
 import gleam/dynamic
-import gleam/io
 import gleam/list
 import gleam/result
 import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
-import strike/element.{type Element, Element, Text}
+import strike/element.{type Element, Element, Island, Map, Text}
 import glentities/html_encoder
 import gleam/string_builder.{type StringBuilder}
 
@@ -43,9 +42,11 @@ pub fn element_to_string_builder(element: Element(a)) -> StringBuilder {
       |> string_builder.append_builder(raw)
       |> string_builder.append("</" <> tag <> ">")
     }
-    x -> {
-      io.debug(x)
-      string_builder.new()
+    Map(generator) -> {
+      element_to_string_builder(generator())
+    }
+    Island(_name, _attrs, _children, ssr_fallbacks) -> {
+      string_builder.concat(list.map(ssr_fallbacks, element_to_string_builder))
     }
   }
 }

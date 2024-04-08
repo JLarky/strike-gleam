@@ -40,7 +40,7 @@ fn rewrite_head(head) {
   let import_maps =
     "{
       \"imports\": {
-        \"strike_islands\": \"/_strike/islands.js\",
+        \"strike_islands\": \"/_strike/app.js\",
         \"react\": \"https://esm.sh/react@0.0.0-experimental-9ba1bbd65-20230922?dev\",
         \"react-dom/client\": \"https://esm.sh/react-dom@0.0.0-experimental-9ba1bbd65-20230922/client?dev\",
         \"react-dom\": \"https://esm.sh/react-dom@0.0.0-experimental-9ba1bbd65-20230922?dev\",

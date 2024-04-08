@@ -15,6 +15,10 @@ pub fn attribute(name: String, value: String) -> Attribute(msg) {
   SimpleAttribute(name, value)
 }
 
+pub fn dyn_attribute(name: String, value: anything) -> Attribute(msg) {
+  FancyAttribute(name, name, dynamic.from(value), False)
+}
+
 pub fn attribute_advanced(
   name: String,
   value: Dynamic,

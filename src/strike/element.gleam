@@ -6,6 +6,10 @@ pub fn text(content: String) -> Element(msg) {
   Text(content)
 }
 
+pub fn island(name, attrs, children, ssr_fallback) -> Element(msg) {
+  Island(name, attrs, children, ssr_fallback)
+}
+
 pub fn element(
   tag: String,
   attrs: List(Attribute(msg)),
@@ -55,6 +59,12 @@ pub fn advanced(
 
 pub type Element(msg) {
   Text(content: String)
+  Island(
+    name: String,
+    attrs: List(Attribute(msg)),
+    children: List(Element(msg)),
+    ssr_fallback: List(Element(msg)),
+  )
   Element(
     tag: String,
     attrs: List(Attribute(msg)),

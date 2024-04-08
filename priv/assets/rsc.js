@@ -139,6 +139,18 @@ function parseModelString(ctx, parent, key, value) {
       };
     } else if (value[0] === "$strike:text") {
       return value[1];
+    } else if (value[0] === "$strike:island") {
+      return {
+        $$typeof: Symbol.for("react.element"),
+        type: StrikeIsland,
+        ref: null,
+        key: null,
+        props: {
+          component: value[1],
+          islandProps: value[2],
+          ssrFallback: value[3],
+        },
+      };
     }
   }
   if (
