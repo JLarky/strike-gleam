@@ -19,11 +19,13 @@ import strike/element/html
 import strike/element.{island, text}
 import strike/attribute.{dyn_attribute, href, lang, suppress_hydration_warning}
 import strike/framework/mist_adapter.{rsc_framework_response}
+import strike/internals/counter_server
 
 pub fn main() {
   // These values are for the Websocket process initialized below
   let selector = process.new_selector()
   let state = Nil
+  let assert Ok(counter_server) = counter_server.new()
 
   let not_found =
     response.new(404)
@@ -32,8 +34,8 @@ pub fn main() {
   let assert Ok(_) =
     fn(req: Request(Connection)) -> Response(ResponseData) {
       case request.path_segments(req) {
-        [] -> handle_rsc_request(req)
-        ["about"] -> handle_rsc_request(req)
+        [] -> handle_rsc_request(counter_server, req)
+        ["about"] -> handle_rsc_request(counter_server, req)
         ["ws"] ->
           mist.websocket(
             request: req,
@@ -62,7 +64,7 @@ pub fn main() {
   process.sleep_forever()
 }
 
-fn handle_rsc_request(req) {
+fn handle_rsc_request(counter_server, req) {
   let sha256 =
     crypto.strong_random_bytes(32)
     |> crypto.hash(Sha256, _)
@@ -79,10 +81,21 @@ fn handle_rsc_request(req) {
         text("see source"),
       ]),
     ])
-  let island_el =
-    island("Counter", [dyn_attribute("serverCounter", 0)], [], [
-      html.div([], [text("Loading...")]),
-    ])
+
+  let island_el = case request.to_uri(req).path {
+    "/" -> {
+      let counter = counter_server.get(counter_server)
+      island("Counter", [dyn_attribute("serverCounter", counter)], [], [
+        html.div([], [text("Loading...")]),
+      ])
+    }
+    _ -> {
+      let counter = counter_server.inc(counter_server)
+      island("Counter", [dyn_attribute("serverCounter", counter)], [], [
+        html.div([], [text("Loading...")]),
+      ])
+    }
+  }
   let body =
     html.div([], [
       nav,
