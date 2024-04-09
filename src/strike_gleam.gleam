@@ -92,7 +92,7 @@ fn handle_rsc_request(counter_server, req) {
     _ -> {
       let counter = counter_server.inc(counter_server)
       island("Counter", [dyn_attribute("serverCounter", counter)], [], [
-        html.div([], [text("Loading...")]),
+        html.button([], [text("Count: 0 (" <> int.to_string(counter) <> ")")]),
       ])
     }
   }

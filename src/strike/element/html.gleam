@@ -54,3 +54,7 @@ pub fn nav(attrs: List(Attribute(msg)), children: List(Element(msg))) {
 pub fn footer(attrs: List(Attribute(msg)), children: List(Element(msg))) {
   element("footer", attrs, children)
 }
+
+pub fn button(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("button", attrs, children)
+}

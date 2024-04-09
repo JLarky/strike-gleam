@@ -14,8 +14,9 @@ pub fn new() {
         actor.continue(state)
       }
       Inc(client) -> {
+        let state = state + 1
         process.send(client, Ok(state))
-        actor.continue(state + 1)
+        actor.continue(state)
       }
     }
   })
