@@ -25,8 +25,6 @@ pub fn to_json(element: Element(a)) -> Json {
     }
     Island(name, attrs, children, ssr_fallback) -> {
       let props = to_props(attrs, children)
-      io.debug(props)
-      io.debug(attrs)
       json.preprocessed_array([
         json.string("$strike:island"),
         json.string(name),
