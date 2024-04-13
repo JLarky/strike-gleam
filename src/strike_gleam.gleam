@@ -15,7 +15,6 @@ import gleam/otp/actor
 import gleam/result
 import gleam/string
 import mist.{type Connection, type ResponseData}
-import youid/uuid
 import strike/element/html
 import strike/element.{island, text}
 import strike/attribute.{
