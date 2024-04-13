@@ -15,17 +15,22 @@ import gleam/otp/actor
 import gleam/result
 import gleam/string
 import mist.{type Connection, type ResponseData}
+import youid/uuid
 import strike/element/html
 import strike/element.{island, text}
-import strike/attribute.{dyn_attribute, href, lang, suppress_hydration_warning}
+import strike/attribute.{
+  attribute, charset, dyn_attribute, href, lang, suppress_hydration_warning,
+}
 import strike/framework/mist_adapter.{rsc_framework_response}
 import strike/internals/counter_server
+import strike/internals/test_data_server
 
 pub fn main() {
   // These values are for the Websocket process initialized below
   let selector = process.new_selector()
   let state = Nil
   let assert Ok(counter_server) = counter_server.new()
+  let assert Ok(test_data_server) = test_data_server.new()
 
   let not_found =
     response.new(404)
@@ -35,6 +40,7 @@ pub fn main() {
     fn(req: Request(Connection)) -> Response(ResponseData) {
       case request.path_segments(req) {
         [] -> handle_rsc_request(counter_server, req)
+        ["ssr-benchmark"] -> handle_table_request(test_data_server, req)
         ["about"] -> handle_rsc_request(counter_server, req)
         ["ws"] ->
           mist.websocket(
@@ -62,6 +68,40 @@ pub fn main() {
     |> mist.start_http
 
   process.sleep_forever()
+}
+
+fn handle_table_request(test_data_server, req) {
+  let page =
+    html.html([lang("en")], [
+      html.head([], [
+        //
+        html.meta([charset("utf-8")]),
+        html.meta([
+          attribute("name", "viewport"),
+          attribute("content", "width=device-width, initial-scale=1"),
+        ]),
+      ]),
+      // html.body([], [table(test_data_server.test_data())]),
+      html.body([], [table(test_data_server.get(test_data_server))]),
+    ])
+
+  rsc_framework_response(req, page)
+}
+
+fn table(data) {
+  html.table([], [
+    html.tbody(
+      [],
+      list.map(data, fn(row) {
+        let #(id, name) = row
+        entry(id, name)
+      }),
+    ),
+  ])
+}
+
+fn entry(id, name) {
+  html.tr([], [html.td([], [text(id)]), html.td([], [text(name)])])
 }
 
 fn handle_rsc_request(counter_server, req) {

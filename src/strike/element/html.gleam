@@ -25,6 +25,10 @@ pub fn html(
   element("html", attrs, children)
 }
 
+pub fn meta(attrs: List(Attribute(msg))) -> Element(msg) {
+  element("meta", attrs, [])
+}
+
 pub fn head(
   attrs: List(Attribute(msg)),
   children: List(Element(msg)),
@@ -57,4 +61,20 @@ pub fn footer(attrs: List(Attribute(msg)), children: List(Element(msg))) {
 
 pub fn button(attrs: List(Attribute(msg)), children: List(Element(msg))) {
   element("button", attrs, children)
+}
+
+pub fn table(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("table", attrs, children)
+}
+
+pub fn tbody(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("tbody", attrs, children)
+}
+
+pub fn tr(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("tr", attrs, children)
+}
+
+pub fn td(attrs: List(Attribute(msg)), children: List(Element(msg))) {
+  element("td", attrs, children)
 }
