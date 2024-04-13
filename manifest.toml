@@ -17,10 +17,11 @@ packages = [
   { name = "mist", version = "1.0.0", build_tools = ["gleam"], requirements = ["birl", "gleam_erlang", "gleam_http", "gleam_otp", "gleam_stdlib", "glisten", "hpack_erl", "logging"], otp_app = "mist", source = "hex", outer_checksum = "7765E53DCC9ACCACF217B8E0CA3DE7E848C783BFAE5118B75011E81C2C80385C" },
   { name = "ranger", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "ranger", source = "hex", outer_checksum = "28E615AE7590ED922AF1510DDF606A2ECBBC2A9609AF36D412EDC925F06DFD20" },
   { name = "thoas", version = "0.4.1", build_tools = ["rebar3"], requirements = [], otp_app = "thoas", source = "hex", outer_checksum = "4918D50026C073C4AB1388437132C77A6F6F7C8AC43C60C13758CC0ADCE2134E" },
+  { name = "youid", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_crypto", "gleam_erlang", "gleam_stdlib"], otp_app = "youid", source = "hex", outer_checksum = "D0ECB8C57449866A1B1A83964EEEA72160BF8E05F8F2EEA540BD0F1626FA94E2" },
 ]
 
 [requirements]
-gleam_crypto = { version = "~> 1.3"}
+gleam_crypto = { version = "~> 1.3" }
 gleam_erlang = { version = "~> 0.25" }
 gleam_http = { version = "~> 3.6" }
 gleam_json = { version = "~> 1.0" }
@@ -29,3 +30,4 @@ gleam_stdlib = { version = "~> 0.34 or ~> 1.0" }
 gleeunit = { version = "~> 1.0" }
 glentities = { version = "~> 6.0" }
 mist = { version = "~> 1.0" }
+youid = { version = "~> 1.0"}
