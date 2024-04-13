@@ -1,4 +1,3 @@
-import gleam/io
 import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
 import strike/element.{type Element, Element, Island, Map, Text}
 import gleam/json.{type Json}
@@ -37,12 +36,17 @@ pub fn to_json(element: Element(a)) -> Json {
 
 fn to_props(attrs, children) {
   let props = list.filter_map(attrs, attr_to_json)
-  let children = case children {
-    [child] -> to_json(child)
-    _ -> json.preprocessed_array(list.map(children, to_json))
+  case children {
+    [] -> props
+    _ -> {
+      let children = case children {
+        [child] -> to_json(child)
+        _ -> json.preprocessed_array(list.map(children, to_json))
+      }
+      let props = list.key_set(props, "children", children)
+      props
+    }
   }
-  let props = list.key_set(props, "children", children)
-  props
 }
 
 pub fn attr_to_json(
