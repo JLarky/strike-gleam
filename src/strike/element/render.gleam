@@ -26,13 +26,16 @@ pub fn element_to_string_builder(element: Element(a)) -> StringBuilder {
       |> html_encoder.encode
       |> string_builder.from_string
     }
-    Element(tag, attrs, children, _self_closing, _void) -> {
+    Element(tag, attrs, children, _self_closing, void) -> {
       let #(attr_str, raw) = attributes_to_string_builder(attrs)
       let output = string_builder.from_string("<" <> tag)
       let output =
         output
         |> string_builder.append_builder(attr_str)
-        |> string_builder.append(">")
+        |> string_builder.append(case void {
+          False -> ">"
+          True -> "/>"
+        })
         |> string_builder.append_builder(
           children
           |> list.map(element_to_string_builder)
@@ -40,7 +43,10 @@ pub fn element_to_string_builder(element: Element(a)) -> StringBuilder {
         )
       output
       |> string_builder.append_builder(raw)
-      |> string_builder.append("</" <> tag <> ">")
+      |> string_builder.append(case void {
+        False -> "</" <> tag <> ">"
+        True -> ""
+      })
     }
     Map(generator) -> {
       element_to_string_builder(generator())
