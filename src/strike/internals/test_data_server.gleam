@@ -1,7 +1,7 @@
-import gleam/option.{None, Some}
-import gleam/list
-import gleam/otp/actor
 import gleam/erlang/process.{type Subject}
+import gleam/list
+import gleam/option.{None, Some}
+import gleam/otp/actor
 import youid/uuid
 
 pub type Message(element) {

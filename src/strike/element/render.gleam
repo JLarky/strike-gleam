@@ -2,10 +2,10 @@ import gleam/bytes_builder.{type BytesBuilder}
 import gleam/dynamic
 import gleam/list
 import gleam/result
+import gleam/string_builder.{type StringBuilder}
+import glentities/html_encoder
 import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
 import strike/element.{type Element, Element, Island, Map, Text}
-import glentities/html_encoder
-import gleam/string_builder.{type StringBuilder}
 
 pub fn element_to_string(element: Element(a)) -> String {
   element

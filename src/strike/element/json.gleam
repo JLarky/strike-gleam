@@ -1,9 +1,9 @@
-import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
-import strike/element.{type Element, Element, Island, Map, Text}
+import gleam/dynamic.{type DecodeError}
 import gleam/json.{type Json}
 import gleam/list
-import gleam/dynamic.{type DecodeError}
 import gleam/result
+import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
+import strike/element.{type Element, Element, Island, Map, Text}
 
 pub fn to_json(element: Element(a)) -> Json {
   case element {

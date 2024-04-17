@@ -2,10 +2,10 @@ import gleam/bytes_builder
 import gleam/json
 import gleam/list
 import strike/attribute.{async, dangerously_set_inner_html, src, type_}
-import strike/element/json as element_json
-import strike/element/html
-import strike/element/render
 import strike/element
+import strike/element/html
+import strike/element/json as element_json
+import strike/element/render
 
 pub fn render_rsc_stream(rsc) {
   json.to_string_builder(element_json.to_json(rsc))

@@ -2,6 +2,7 @@ import gleam/bit_array
 import gleam/bytes_builder
 import gleam/crypto.{Sha256}
 import gleam/erlang
+import gleam/erlang/os
 import gleam/erlang/process
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
@@ -9,17 +10,16 @@ import gleam/int
 import gleam/io
 import gleam/iterator
 import gleam/list
-import gleam/erlang/os
 import gleam/option.{None, Some}
 import gleam/otp/actor
 import gleam/result
 import gleam/string
 import mist.{type Connection, type ResponseData}
-import strike/element/html
-import strike/element.{island, text}
 import strike/attribute.{
   attribute, charset, dyn_attribute, href, lang, suppress_hydration_warning,
 }
+import strike/element.{island, text}
+import strike/element/html
 import strike/framework/mist_adapter.{rsc_framework_response}
 import strike/internals/counter_server
 import strike/internals/test_data_server
