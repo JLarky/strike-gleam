@@ -1,5 +1,5 @@
 [build]
   bin = "./run.sh"
   cmd = ":"
-  include_ext = ["gleam"]
+  include_ext = ["gleam", "ex"]
   exclude_dir = ["build", "tmp"]

@@ -3,9 +3,9 @@ import gleam/dynamic
 import gleam/list
 import gleam/result
 import gleam/string_builder.{type StringBuilder}
-import glentities/html_encoder
 import strike/attribute.{type Attribute, FancyAttribute, SimpleAttribute}
 import strike/element.{type Element, Element, Island, Map, Text}
+import strike/internals/render/html.{html_escape}
 
 pub fn element_to_string(element: Element(a)) -> String {
   element
@@ -22,9 +22,7 @@ pub fn element_to_bytes_builder(element: Element(a)) -> BytesBuilder {
 pub fn element_to_string_builder(element: Element(a)) -> StringBuilder {
   case element {
     Text(text) -> {
-      text
-      |> html_encoder.encode
-      |> string_builder.from_string
+      html_escape(text)
     }
     Element(tag, attrs, children, _self_closing, void) -> {
       let #(attr_str, raw) = attributes_to_string_builder(attrs)
@@ -124,6 +122,6 @@ fn do_attribute_to_string_builder(key: String, value: String) -> StringBuilder {
   |> string_builder.append(key)
   |> string_builder.append("=\"")
   // FIXME: is this safe to encode the value this way?
-  |> string_builder.append(html_encoder.encode(value))
+  |> string_builder.append_builder(html_escape(value))
   |> string_builder.append("\"")
 }
