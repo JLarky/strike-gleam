@@ -23,6 +23,7 @@ pub fn element_to_string_builder(element: Element(a)) -> StringBuilder {
   case element {
     Text(text) -> {
       html_escape(text)
+      |> string_builder.from_string
     }
     Element(tag, attrs, children, _self_closing, void) -> {
       let #(attr_str, raw) = attributes_to_string_builder(attrs)
@@ -122,6 +123,6 @@ fn do_attribute_to_string_builder(key: String, value: String) -> StringBuilder {
   |> string_builder.append(key)
   |> string_builder.append("=\"")
   // FIXME: is this safe to encode the value this way?
-  |> string_builder.append_builder(html_escape(value))
+  |> string_builder.append(html_escape(value))
   |> string_builder.append("\"")
 }
