@@ -7,11 +7,9 @@ import gleam/erlang/process
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/int
-import gleam/io
 import gleam/iterator
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/otp/actor
+import gleam/option.{None}
 import gleam/result
 import gleam/string
 import mist.{type Connection, type ResponseData}
@@ -25,9 +23,6 @@ import strike/internals/counter_server
 import strike/internals/test_data_server
 
 pub fn main() {
-  // These values are for the Websocket process initialized below
-  let selector = process.new_selector()
-  let state = Nil
   let assert Ok(counter_server) = counter_server.new()
   let assert Ok(test_data_server) = test_data_server.new()
 
@@ -41,17 +36,8 @@ pub fn main() {
         [] -> handle_rsc_request(counter_server, req)
         ["ssr-benchmark"] -> handle_table_request(test_data_server, req)
         ["about"] -> handle_rsc_request(counter_server, req)
-        ["ws"] ->
-          mist.websocket(
-            request: req,
-            on_init: fn(_conn) { #(state, Some(selector)) },
-            on_close: fn(_state) { io.println("goodbye!") },
-            handler: handle_ws_message,
-          )
-        ["echo"] -> echo_body(req)
         ["chunk"] -> serve_chunk(req)
         ["_strike", ..rest] -> serve_file(req, list.concat([["assets"], rest]))
-        ["form"] -> handle_form(req)
 
         _ -> not_found
       }
@@ -160,45 +146,19 @@ pub type MyMessage {
   Broadcast(String)
 }
 
-fn handle_ws_message(state, conn, message) {
-  case message {
-    mist.Text("ping") -> {
-      let assert Ok(_) = mist.send_text_frame(conn, "pong")
-      actor.continue(state)
-    }
-    mist.Text(_) | mist.Binary(_) -> {
-      actor.continue(state)
-    }
-    mist.Custom(Broadcast(text)) -> {
-      let assert Ok(_) = mist.send_text_frame(conn, text)
-      actor.continue(state)
-    }
-    mist.Closed | mist.Shutdown -> actor.Stop(process.Normal)
-  }
-}
-
-fn echo_body(request: Request(Connection)) -> Response(ResponseData) {
-  let content_type =
-    request
-    |> request.get_header("content-type")
-    |> result.unwrap("text/plain")
-
-  mist.read_body(request, 1024 * 1024 * 10)
-  |> result.map(fn(req) {
-    response.new(200)
-    |> response.set_body(mist.Bytes(bytes_builder.from_bit_array(req.body)))
-    |> response.set_header("content-type", content_type)
-  })
-  |> result.lazy_unwrap(fn() {
-    response.new(400)
-    |> response.set_body(mist.Bytes(bytes_builder.new()))
-  })
-}
-
 fn serve_chunk(_request: Request(Connection)) -> Response(ResponseData) {
+  let iter2 = {
+    process.sleep(1000)
+    use <- iterator.yield("1")
+    process.sleep(1000)
+    use <- iterator.yield("two")
+    process.sleep(1000)
+    use <- iterator.yield("drei")
+    process.sleep(1000)
+    iterator.empty()
+  }
   let iter =
-    ["one", "two", "three"]
-    |> iterator.from_list
+    iter2
     |> iterator.map(bytes_builder.from_string)
 
   response.new(200)
@@ -226,12 +186,6 @@ fn serve_file(
     response.new(404)
     |> response.set_body(mist.Bytes(bytes_builder.new()))
   })
-}
-
-fn handle_form(req: Request(Connection)) -> Response(ResponseData) {
-  let _req = mist.read_body(req, 1024 * 1024 * 30)
-  response.new(200)
-  |> response.set_body(mist.Bytes(bytes_builder.new()))
 }
 
 fn guess_content_type(path: String) -> String {
